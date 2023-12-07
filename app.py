@@ -1,33 +1,15 @@
-from flask import Flask, render_template, request
-import mysql.connector
-from flask_cors import CORS
-import json
-
-mysql = mysql.connector.connect(
-    user='web',
-    password='webPass',
-    host='127.0.0.1',
-    database='library'
-)
+from flask import Flask, jsonify, request
+from flask_pymongo import PyMongo
 
 app = Flask(__name__)
-CORS(app)
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/library'
+mongo = PyMongo(app)
 
-@app.route("/books")
+@app.route("/")
 def get_books():
-    cur = mysql.cursor()
-    cur.execute('''SELECT * FROM books''')
-    rv = cur.fetchall()
-    books = [{'ID': row[0], 'Title': row[1], 'Author': row[2]} for row in rv]
-    return json.dumps({'Books': books, 'count': len(books)})
-
-@app.route("/users")
-def get_users():
-    cur = mysql.cursor()
-    cur.execute('''SELECT * FROM users''')
-    rv = cur.fetchall()
-    users = [{'ID': row[0], 'Name': row[1], 'Email': row[2]} for row in rv]
-    return json.dumps({'Users': users, 'count': len(users)})
+    books = mongo.db.books.find()
+    book_list = [{"title": book["title"], "author": book["author"]} for book in books]
+    return jsonify({"books": book_list})
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port='8080')
+    app.run(host='0.0.0.0', port=8080)
