@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Library Management System</title>
+<script>
+function getBooks() {
+    fetch('https://yourdomain.dbsprojects.ie:8080/books')
+        .then(response => response.json())
+        .then(data => {
+            const table = document.getElementById('booksTable');
+            table.innerHTML = '<tr><td>ID</td><td>Title</td><td>Author</td></tr>';
+            data.Books.forEach(book => {
+                const row = table.insertRow();
+                row.insertCell(0).innerText = book.ID;
+                row.insertCell(1).innerText = book.Title;
+                row.insertCell(2).innerText = book.Author;
+            });
+        });
+}
+
+function getUsers() {
+    fetch('https://yourdomain.dbsprojects.ie:8080/users')
+        .then(response => response.json())
+        .then(data => {
+            const table = document.getElementById('usersTable');
+            table.innerHTML = '<tr><td>ID</td><td>Name</td><td>Email</td></tr>';
+            data.Users.forEach(user => {
+                const row = table.insertRow();
+                row.insertCell(0).innerText = user.ID;
+                row.insertCell(1).innerText = user.Name;
+                row.insertCell(2).innerText = user.Email;
+            });
+        });
+}
+</script>
+</head>
+<body>
+<button onclick="getBooks()">Get Books</button>
+<table id="booksTable"></table>
+
+<button onclick="getUsers()">Get Users</button>
+<table id="usersTable"></table>
+</body>
+</html>
